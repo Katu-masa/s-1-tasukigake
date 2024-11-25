@@ -92,7 +92,19 @@
                 document.getElementById("currentC").innerText = correctCount;
             }, 1000);
         }
+        function gcd(a, b) {
+            while (b !== 0) {
+                let temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
 
+        // 互いに素かどうか判定する関数
+        function areCoprime(num1, num2) {
+            return gcd(num1, num2) === 1 ? 1 : 0;
+        }
         function generateProblem() {
             let a, b, c, d;
             do {
@@ -102,28 +114,27 @@
             abtimes = a * c;
             const g = getRandomInt(1, 2);
             const h = getRandomInt(1, 2);
-
-            if (g == 1) {
-                b = getRandomInt(1, 10);
-            } else {
-                b = getRandomInt(-6, -1);
-            }
-            if (h == 1) {
-                d = getRandomInt(1, 10);
-            } else {
-                d = getRandomInt(-6, -1);
-            }
-
+            do {
+                if (g == 1) {
+                    b = getRandomInt(1, 6);
+                } else {
+                    b = getRandomInt(-6, -1);
+                }
+            } while (a != 1 && areCoprime(a, Math.abs(b)) == 0)
+            do {
+                if (h == 1) {
+                    d = getRandomInt(1, 6);
+                } else {
+                    d = getRandomInt(-6, -1);
+                }
+            } while (c != 1 && areCoprime(c, Math.abs(d)) == 0)
 
             if (c > a) {
-                const hoge = c;
-                c = a;
-                a = hoge;
+                [a, c] = [c, a];
+                [b, d] = [d, b];
             }
             if (a == c && d > b) {
-                const hoge = d;
-                d = d;
-                d = hoge;
+                [b, d] = [d, b];
             }
             frag[0] = a;
             frag[1] = b;
@@ -134,11 +145,11 @@
             bctimes = b * c;
             const e = -(a * d + b * c);
             const f = b * d;
-            let problem = `${a * c}  x^2 ${e === 0 ? '' : (e > 0 ? '+' : '') + e + 'x'} ${f === 0 ? '' : (f > 0 ? '+' : '-') + Math.abs(f)}`;
+            let problem = `${a * c}  x^2 ${e === 0 ? '' : (e > 0 ? '+' : '') + (e == 1 ? '' : e == -1 ? '-' : e) + 'x'} ${f === 0 ? '' : (f > 0 ? '+' : '-') + Math.abs(f)}`;
 
 
             currentSolution = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
-
+            problem.trim();
             options = generateOptions(currentSolution);
             document.getElementById("problem").innerHTML = '$$' + problem + '$$';
             document.getElementById("solution").innerHTML = '';
@@ -181,32 +192,102 @@
                         if ((frag[1] * frag[3]) % j == 0) {
                             d = j;
                             b = frag[1] * frag[3] / j;
-                            let wrongOption = `(${a === 1 ? '' : a}x ${b > 0 ? '+' : '-'} ${Math.abs(b)})(${c === 1 ? '' : c}x ${d > 0 ? '+' : '-'} ${Math.abs(d)})`;
-                            if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
-                                wrongOptions.push(wrongOption);
+                            if ((a == 1 || areCoprime(a, Math.abs(b)) == 1) && (c == 1 || areCoprime(c, Math.abs(d)) == 1)) {
+                                let wrongOption = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+                                if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                    wrongOptions.push(wrongOption);
+                                }
+                            }
+                            [b, d] = [d, b];
+                            if ((a == 1 || areCoprime(a, Math.abs(b)) == 1) && (c == 1 || areCoprime(c, Math.abs(d)) == 1)) {
+                                wrongOption = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+                                if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                    wrongOptions.push(wrongOption);
+                                }
                             }
                             [b, d] = [-d, -b];
-                            wrongOption = `(${a === 1 ? '' : a}x ${b > 0 ? '+' : '-'} ${Math.abs(b)})(${c === 1 ? '' : c}x ${d > 0 ? '+' : '-'} ${Math.abs(d)})`;
-                            if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
-                                wrongOptions.push(wrongOption);
+                            if ((a == 1 || areCoprime(a, Math.abs(b)) == 1) && (c == 1 || areCoprime(c, Math.abs(d)) == 1)) {
+                                wrongOption = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+                                if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                    wrongOptions.push(wrongOption);
+                                }
                             }
-
+                            [b, d] = [d, b];
+                            if ((a == 1 || areCoprime(a, Math.abs(b)) == 1) && (c == 1 || areCoprime(c, Math.abs(d)) == 1)) {
+                                wrongOption = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+                                if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                    wrongOptions.push(wrongOption);
+                                }
+                            }
                         }
 
                     }
                 }
             }
-            Problemk++;
+            if (wrongOptions.length < 3) {
+                for (let i = 1; i * i <= Math.abs(frag[0] * frag[2]); i++) {
+                    if ((frag[0] * frag[2]) % i == 0) {
+                        c = i;
+                        a = frag[0] * frag[2] / i;
+                        for (let j = 1; j * j <= Math.abs(frag[1] * frag[3]); j++) {
+                            if ((frag[1] * frag[3]) % j == 0) {
+                                d = j;
+                                b = -frag[1] * frag[3] / j;
+                                if ((a == 1 || areCoprime(a, Math.abs(b)) == 1) && (c == 1 || areCoprime(c, Math.abs(d)) == 1)) {
+                                    let wrongOption = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+                                    if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                        wrongOptions.push(wrongOption);
+                                    }
+                                }
+                                [b, d] = [d, b];
+                                if ((a == 1 || areCoprime(a, Math.abs(b)) == 1) && (c == 1 || areCoprime(c, Math.abs(d)) == 1)) {
+                                    wrongOption = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+                                    if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                        wrongOptions.push(wrongOption);
+                                    }
+                                }
+                                [b, d] = [-d, -b];
+                                if ((a == 1 || areCoprime(a, Math.abs(b)) == 1) && (c == 1 || areCoprime(c, Math.abs(d)) == 1)) {
+                                    wrongOption = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+                                    if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                        wrongOptions.push(wrongOption);
+                                    }
+                                }
+                                [b, d] = [d, b];
+                                if ((a == 1 || areCoprime(a, Math.abs(b)) == 1) && (c == 1 || areCoprime(c, Math.abs(d)) == 1)) {
+                                    wrongOption = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+                                    if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                        wrongOptions.push(wrongOption);
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
 
             return shuffle([correct, ...wrongOptions]);
         }
 
         function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
+            let ans = [];
+            const k = Math.floor(Math.random() * 4);
+            for (let i = array.length + 1; i > 1; i--) {
+                const j = Math.floor(Math.random() * (i));
                 [array[i], array[j]] = [array[j], array[i]];
             }
-            return array;
+            for (i = 0; i < 3; i++) {
+                if (i == k) {
+                    ans.push(array[0]);
+                    ans.push(array[i + 1]);
+                }
+                else {
+                    ans.push(array[i + 1]);
+                }
+
+            }
+            return ans;
         }
 
         function getRandomInt(min, max) {
