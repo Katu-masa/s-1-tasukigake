@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,38 +11,51 @@
             text-align: center;
             margin-top: 50px;
         }
-        #problem, #solution, #timer {
+
+        #problem,
+        #solution,
+        #timer {
             font-size: 24px;
             margin-bottom: 20px;
         }
+
         button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            margin: 5px; /* ボタンの間隔を設定 */
+            margin: 5px;
+            /* ボタンの間隔を設定 */
         }
+
         #options {
-            display: flex; /* フレックスボックスを使用 */
-            justify-content: center; /* 中央寄せ */
-            flex-wrap: wrap; /* 必要に応じて折り返し */
+            display: flex;
+            /* フレックスボックスを使用 */
+            justify-content: center;
+            /* 中央寄せ */
+            flex-wrap: wrap;
+            /* 必要に応じて折り返し */
         }
+
         #start-screen {
             display: block;
         }
-        #quiz-screen, #end-screen {
+
+        #quiz-screen,
+        #end-screen {
             display: none;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
+
 <body>
     <div id="start-screen">
         <h1>たすき掛けのクイズ</h1>
         <button onclick="startQuiz()">スタート</button>
     </div>
-    
+
     <div id="quiz-screen">
-        <div id="timer">経過時間: <span id="time">0</span>秒    連続正解数: <span id="currentC">0</span></div>
+        <div id="timer">経過時間: <span id="time">0</span>秒 連続正解数: <span id="currentC">0</span></div>
         <div id="problem">ここに問題が表示されます</div>
         <div id="options"></div>
         <div id="solution"></div>
@@ -62,11 +76,12 @@
         let timerInterval;
         let abtimes;
         let cdtimes;
+        let frag = [];
 
         function startQuiz() {
             document.getElementById("start-screen").style.display = "none";
             document.getElementById("quiz-screen").style.display = "block";
-            generateProblem(); 
+            generateProblem();
             startTimer();
         }
 
@@ -78,48 +93,56 @@
             }, 1000);
         }
 
-        function generateProblem() {    let a, b;
-    do {
-        a = getRandomInt(1, 4);
-        b = getRandomInt(1, 4);
-    } while (a * b === 1); // a * b が 1 の場合再度値を定義
-abtimes = a*b;
+        function generateProblem() {
+            let a, b, c, d;
+            do {
+                a = getRandomInt(1, 4);
+                c = getRandomInt(1, 4);
+            } while (a * c === 1); // a * b が 1 の場合再度値を定義
+            abtimes = a * c;
             const g = getRandomInt(1, 2);
             const h = getRandomInt(1, 2);
-            let c;
-            let d;
+
             if (g == 1) {
-                c = getRandomInt(1, 10);     
+                b = getRandomInt(1, 10);
             } else {
-                c = getRandomInt(-6, -1);
+                b = getRandomInt(-6, -1);
             }
             if (h == 1) {
-                d = getRandomInt(1, 10);     
+                d = getRandomInt(1, 10);
             } else {
                 d = getRandomInt(-6, -1);
             }
-            if(b>a){
-            const hoge = b;
-            b=a ;
-            a=hoge;
-            }
-            if(d>c){
-            const hoge = d;
-            d=c ;
-            c=hoge;
-            }            
-            bctimes = b*c;
-            const e = -(c * b + d * a);
-            const f = c * d; 
-            let problem = `${a * b === 1 ? 'x^2' : a * b + 'x^2'} ${e === 0 ? '' : (e > 0 ? '+' : '') + e + 'x'} ${f === 0 ? '' : (f > 0 ? '+' : '-') + Math.abs(f)}`;
-            
 
-            currentSolution = `(${a==1 ? '' : a }x ${c > 0 ? '' : '+'} ${-c})(${b==1 ? '' : b}x ${d > 0 ? '' : '+'} ${-d})`;
-            
+
+            if (c > a) {
+                const hoge = c;
+                c = a;
+                a = hoge;
+            }
+            if (a == c && d > b) {
+                const hoge = d;
+                d = d;
+                d = hoge;
+            }
+            frag[0] = a;
+            frag[1] = b;
+            frag[2] = c;
+            frag[3] = d;
+            frag[4] = 0;
+
+            bctimes = b * c;
+            const e = -(a * d + b * c);
+            const f = b * d;
+            let problem = `${a * c}  x^2 ${e === 0 ? '' : (e > 0 ? '+' : '') + e + 'x'} ${f === 0 ? '' : (f > 0 ? '+' : '-') + Math.abs(f)}`;
+
+
+            currentSolution = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
+
             options = generateOptions(currentSolution);
             document.getElementById("problem").innerHTML = '$$' + problem + '$$';
             document.getElementById("solution").innerHTML = '';
-            document.getElementById("options").innerHTML = options.map((option, index) => 
+            document.getElementById("options").innerHTML = options.map((option, index) =>
                 `<button class="option" onclick="checkAnswer('${option}', '${currentSolution}')">${index + 1}: $$${option}$$</button>`
             ).join('');
             MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
@@ -131,7 +154,7 @@ abtimes = a*b;
             if (isCorrect) {
                 correctCount++;
             }
-         else {
+            else {
                 correctCount = 0; // 不正解のときは連続正解数を0に設定
             }
             // 5問正解したらエンド画面に移動
@@ -146,45 +169,35 @@ abtimes = a*b;
 
         function generateOptions(correct) {
             const wrongOptions = [];
-            while (wrongOptions.length < 3) {
-            let a=0;
-            let c=0;
-            let b,d;
-            let i=0;
-            do {
-        a = getRandomInt(1, 4);
-        c = getRandomInt(1, 4);
-    } while(abtimes !=a*c) 
-    do{
-                const g = getRandomInt(1, 2);
-                const h = getRandomInt(1, 2);
-                if (g == 1) {
-                    b = getRandomInt(1, 10);     
-                } else {
-                    b = getRandomInt(-6, -1);
-                }
-                if (h == 1) {
-                    d = getRandomInt(1, 10);     
-                } else {
-                    d = getRandomInt(-6, -1);
-                } 
-                i++;
-            }while (Math.abs(bctimes) != Math.abs(b*d)||i==10) 
-                if(c>a){
-                    const hoge = c;
-                    c=a ;
-                    a=hoge;
-                }
-                if(d<b){
-                    const hoge = d;
-                    d=b ;
-                    b=hoge;
-                } 
-                let wrongOption = `(${a === 1 ? '' : a}x ${b > 0 ? '+' : '-'} ${Math.abs(b)})(${c === 1 ? '' : c}x ${d > 0 ? '+' : '-'} ${Math.abs(d)})`;
-                if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption !== correct) {
-                    wrongOptions.push(wrongOption);
+            let Problemk = 0;//解答の試行回数
+            let a = 0;
+            let c = 0;
+            let b, d;
+            for (let i = 1; i * i <= Math.abs(frag[0] * frag[2]); i++) {
+                if ((frag[0] * frag[2]) % i == 0) {
+                    c = i;
+                    a = frag[0] * frag[2] / i;
+                    for (let j = 1; j * j <= Math.abs(frag[1] * frag[3]); j++) {
+                        if ((frag[1] * frag[3]) % j == 0) {
+                            d = j;
+                            b = frag[1] * frag[3] / j;
+                            let wrongOption = `(${a === 1 ? '' : a}x ${b > 0 ? '+' : '-'} ${Math.abs(b)})(${c === 1 ? '' : c}x ${d > 0 ? '+' : '-'} ${Math.abs(d)})`;
+                            if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                wrongOptions.push(wrongOption);
+                            }
+                            [b, d] = [-d, -b];
+                            wrongOption = `(${a === 1 ? '' : a}x ${b > 0 ? '+' : '-'} ${Math.abs(b)})(${c === 1 ? '' : c}x ${d > 0 ? '+' : '-'} ${Math.abs(d)})`;
+                            if (wrongOptions.indexOf(wrongOption) === -1 && wrongOption != correct) {
+                                wrongOptions.push(wrongOption);
+                            }
+
+                        }
+
+                    }
                 }
             }
+            Problemk++;
+
             return shuffle([correct, ...wrongOptions]);
         }
 
@@ -215,9 +228,10 @@ abtimes = a*b;
         }
 
         // ページを読み込んだときにスタート画面を表示
-        window.onload = () => { 
-            document.getElementById("start-screen").style.display = "block"; 
+        window.onload = () => {
+            document.getElementById("start-screen").style.display = "block";
         };
     </script>
 </body>
+
 </html>
