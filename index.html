@@ -272,21 +272,15 @@
 
         function shuffle(array) {
             let ans = [];
-            const k = Math.floor(Math.random() * 4);
+            const k = Math.floor(Math.random() * 5);
             for (let i = array.length -1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i))+1;
                 [array[i], array[j]] = [array[j], array[i]];
             }
-            for (i = 0; i < 3; i++) {
-                if (i == k) {
-                    ans.push(array[0]);
-                    ans.push(array[i + 1]);
-                }
-                else {
-                    ans.push(array[i + 1]);
-                }
-
+            for (i = 1; i < 4; i++) {
+               ans[i]=array[i];
             }
+            ans.splice(k,0,array[0]);
             return ans;
         }
 
