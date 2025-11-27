@@ -47,15 +47,15 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
-<img src="https://profile-counter.glitch.me/my-github-site-2025/count.svg" alt="アクセスカウンター" />
+
 <body>
     <div id="start-screen">
         <h1>たすき掛けのクイズ</h1>
         <button onclick="startQuiz()">スタート</button>
         <footer>
-    <p>&copy; 2025 My Site</p>
-    >     <p>アクセス数：<img src="https://profile-counter.glitch.me/katu-masa-homepage/count.svg" alt="アクセスカウンター" /></p>
-</footer>
+            <p>&copy; 2025 My Site</p>
+            <p>アクセス数：<img src="https://profile-counter.glitch.me/katu-masa-homepage/count.svg" alt="アクセスカウンター" /></p>
+        </footer>
     </div>
 
     <div id="quiz-screen">
@@ -68,8 +68,7 @@
     <div id="end-screen">
         <h1>終了画面</h1>
         <p>お疲れ様でした！ </p>
-        <p>5問正解するまでにかかった時間: <span id="elapsedTime"></span>秒</p> <!-- 経過時間を表示するための要素を追加 -->
-        <button onclick="resetQuiz()">再スタート</button>
+        <p>5問正解するまでにかかった時間: <span id="elapsedTime"></span>秒</p> <button onclick="resetQuiz()">再スタート</button>
     </div>
 
     <script>
@@ -148,7 +147,7 @@
 
             const e = -(a * d + b * c);
             const f = b * d;
-            let problem = `${a * c}  x^2 ${e === 0 ? '' : (e > 0 ? '+' : '') + (e == 1 ? '' : e == -1 ? '-' : e) + 'x'} ${f === 0 ? '' : (f > 0 ? '+' : '-') + Math.abs(f)}`;
+            let problem = `${a * c} x^2 ${e === 0 ? '' : (e > 0 ? '+' : '') + (e == 1 ? '' : e == -1 ? '-' : e) + 'x'} ${f === 0 ? '' : (f > 0 ? '+' : '-') + Math.abs(f)}`;
 
 
             currentSolution = `(${a == 1 ? '' : a}x ${b > 0 ? '' : '+'} ${-b})(${c == 1 ? '' : c}x ${d > 0 ? '' : '+'} ${-d})`;
